@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Realistic Casio fx-991D Plus Web Calculator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #222 0%, #333 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .calc-casio-991d {
+      position: relative;
+      width: 370px;
+      height: 770px;
+      background: radial-gradient(ellipse at 55% 12%, #444 70%, #191919 100%);
+      border-radius: 36px 36px 50px 50px/42px 42px 65px 65px;
+      box-shadow:
+        0 7px 40px 10px #000b,
+        inset 0 2px 10px #fff2,
+        0 1.5px 4px #0009;
+      border: 1.8px solid #2c2c2c;
+      overflow: hidden;
+      user-select: none;
+      font-family: 'Share Tech Mono', monospace;
+      background-blend-mode: multiply;
+    }
+    /* Solar panel */
+    .calc-solar {
+      position: absolute;
+      top: 30px; left: 38px;
+      width: 105px; height: 20px;
+      background: linear-gradient(90deg,#2d141c 10%,#423942 90%);
+      border-radius: 6px;
+      box-shadow: inset 0 1.8px 5px #fff3, 0 1.5px 2px #222d;
+      border: 1.5px solid #1b1520;
+    }
+    /* Casio branding */
+    .calc-brand {
+      position: absolute;
+      top: 12px; left: 32px;
+      font-size: 1.25em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #eee;
+      text-shadow: 0 1.5px 2px #222b;
+    }
+    .calc-model {
+      position: absolute;
+      top: 17px; right: 28px;
+      font-size: 0.95em;
+      font-weight: 700;
+      color: #f5f7fa;
+      letter-spacing: 0.03em;
+      text-shadow: 0 1.5px 2px #222b;
+    }
+    .calc-natural {
+      position: absolute;
+      top: 36px; right: 38px;
+      font-size: 0.97em;
+      color: #e8e1c5;
+      font-weight: bold;
+      letter-spacing: 0.04em;
+      text-shadow: 0 1.5px 2px #222b;
+    }
+    /* LCD screen */
+    .calc-lcd {
+      position: absolute;
+      left: 25px; top: 65px;
+      width: 320px; height: 85px;
+      background: linear-gradient(180deg, #f7f8fa 95%, #aaa 100%);
+      border-radius: 8px;
+      box-shadow:
+        0 2px 14px #aaa7,
+        0 1.5px 5px #222b,
+        inset 0 1.2px 8px #fff8;
+      border: 2.5px solid #444;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 14px 14px 7px 14px;
+      z-index: 3;
+    }
+    .lcd-math {
+      width: 100%;
+      min-height: 36px;
+      font-size: 1.32em;
+      color: #161a1c;
+      text-align: right;
+      font-family: 'Share Tech Mono', monospace;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: pre;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+    .lcd-ans {
+      font-size: 1em;
+      color: #2e3f26;
+      text-align: right;
+      min-height: 20px;
+      padding-right: 1px;
+      font-family: 'Share Tech Mono', monospace;
+      opacity: .97;
+    }
+    /* D-pad */
+    .calc-dpad {
+      position: absolute;
+      left: 127px; top: 160px;
+      width: 60px; height: 60px;
+      z-index: 3;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .dpad-btn {
+      position: absolute;
+      width: 36px; height: 18px;
+      background: linear-gradient(180deg, #444 60%, #161616 100%);
+      border-radius: 8px 8px 14px 14px/8px 8px 14px 14px;
+      box-shadow: 0 1.2px 4px #111a, 0 1.5px 2px #fff2 inset;
+      border: 1.3px solid #2a2d2d;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .dpad-btn:active { background: #222; }
+    .dpad-up { top: 0; left: 12px; transform: rotate(0deg);}
+    .dpad-down { bottom: 0; left: 12px; transform: rotate(180deg);}
+    .dpad-left { top: 21px; left: -7px; width: 18px; height: 36px; border-radius: 8px 14px 14px 8px/8px 14px 14px 8px; transform: rotate(-90deg);}
+    .dpad-right { top: 21px; right: -7px; width: 18px; height: 36px; border-radius: 14px 8px 8px 14px/14px 8px 8px 14px; transform: rotate(90deg);}
+    .dpad-center {
+      position: absolute;
+      left: 16px; top: 21px;
+      width: 28px; height: 28px;
+      background: radial-gradient(circle at 65% 35%, #c8c7c7 65%, #888 90%, #222 100%);
+      border-radius: 50%;
+      box-shadow: 0 1.5px 4px #111a, 0 1.5px 2px #fff2 inset;
+      border: 1.3px solid #2a2d2d;
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .dpad-arrow { font-size: 1.07em; color: #e6e6e6; text-shadow: 0 1px 1px #222; pointer-events: none;}
+    .dpad-center-dot {
+      position: absolute;
+      left: 12px; top: 12px;
+      width: 4px; height: 4px;
+      background: #222;
+      border-radius: 50%;
+      z-index: 20;
+      opacity: .7;
+    }
+    /* Key grid */
+    .calc-keyboard {
+      position: absolute;
+      left: 26px; top: 245px;
+      width: 318px; height: 490px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(9, 1fr);
+      gap: 7px 5.6px;
+      z-index: 2;
+      padding-bottom: 10px;
+    }
+    .key-btn {
+      background: linear-gradient(180deg, #f8f7f7 20%, #bdbdbd 75%, #585858 100%);
+      border-radius: 7px;
+      border: 1.8px solid #bcbcbc;
+      box-shadow:
+        0 2.5px 7px #2224 inset,
+        0 1.5px 2px #fff2 inset,
+        0 2.5px 8px #0003;
+      font-size: 1.09em;
+      font-family: 'Share Tech Mono', monospace;
+      color: #252525;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.13s, box-shadow 0.13s;
+      outline: none;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-shadow: 0 1.5px 1.5px #fff6;
+    }
+    .key-btn:active {
+      background: linear-gradient(180deg, #e8e7e7 10%, #9d9d9d 70%, #383838 100%);
+      box-shadow: 0 1.5px 2px #fff2 inset, 0 1.5px 2px #0005;
+    }
+    /* Example for colored keys */
+    .key-orange { background: linear-gradient(180deg,#ffd16b 70%,#e2a321 100%); color: #6b3c00; border-color: #e4c07a; }
+    .key-green { background: linear-gradient(180deg,#bbec8e 70%,#53a100 100%); color: #265b00; border-color: #9fe448; }
+    .key-gray { background: linear-gradient(180deg,#c6c6c6 80%,#8b8b8b 100%); color: #222; border-color: #aaa; }
+    .key-yellow { background: linear-gradient(180deg,#fff8b3 70%,#ffe34e 100%); color: #aa9400; border-color: #f7e97a; }
+    .key-pink { background: linear-gradient(180deg,#f7c8e0 70%,#e26ba1 100%); color: #ae006d; border-color: #e9b0d1; }
+    .key-red { background: linear-gradient(180deg,#ffb3b3 70%,#e24e4e 100%); color: #a60000; border-color: #e97a7a; }
+    .key-blue { background: linear-gradient(180deg,#b3d8ff 70%,#4e8be2 100%); color: #0033a6; border-color: #7aaee9; }
+
+    .key-btn .key-bot { font-size: 0.87em; color: #444; margin-top: 1px; }
+    .key-btn .key-top { font-size: 0.7em; color: #b95e5e; position: absolute; left: 5px; top: 2px;}
+    .key-btn .key-lft { font-size: 0.7em; color: #3c8e8e; position: absolute; left: 5px; bottom: 2px;}
+    .key-btn .key-sym { font-size: 0.84em; color: #222; }
+    /* Key sizes */
+    .key-wide { grid-column: span 2; }
+    /* Bevel shadow for realism */
+    .calc-casio-991d:after {
+      content: '';
+      position: absolute;
+      pointer-events:none;
+      inset: 0;
+      border-radius: 36px 36px 50px 50px/42px 42px 65px 65px;
+      box-shadow:
+        0 10px 40px 10px #0009 inset,
+        0 0 2px #fff4 inset,
+        0 -6px 20px 10px #fff1 inset;
+      z-index: 4;
+      opacity: 0.8;
+      mix-blend-mode: lighten;
+    }
+    /* Responsive */
+    @media (max-width: 500px) {
+      .calc-casio-991d { transform: scale(0.8);}
+    }
+  </style>
+</head>
+<body>
+   <div class="calc-casio-991d" id="casio-calc">
+    <div class="calc-solar"></div>
+    <div class="calc-brand">CASIO</div>
+    <div class="calc-model">fx-991D PLUS</div>
+    <div class="calc-natural">NATURAL-V.P.A.M.</div>
+    <div class="calc-lcd">
+      <div class="lcd-math" id="lcdMath">sin(75)=\\frac{\\sqrt{6}+\\sqrt{2}}{4}</div>
+      <div class="lcd-ans" id="lcdAns">BENAR</div>
+    </div>
+    <!-- D-pad -->
+    <div class="calc-dpad">
+      <button class="dpad-btn dpad-up"   onclick="dpad('up')"><span class="dpad-arrow">&#9650;</span></button>
+      <button class="dpad-btn dpad-down" onclick="dpad('down')"><span class="dpad-arrow">&#9660;</span></button>
+      <button class="dpad-btn dpad-left" onclick="dpad('left')"><span class="dpad-arrow">&#9664;</span></button>
+      <button class="dpad-btn dpad-right"onclick="dpad('right')"><span class="dpad-arrow">&#9654;</span></button>
+      <button class="dpad-center" onclick="dpad('center')"></button>
+      <div class="dpad-center-dot"></div>
+    </div>
+    <!-- Keyboard -->
+    <div class="calc-keyboard" id="calc-keys">
+      <!-- Example: top row -->
+      <button class="key-btn key-yellow"><span class="key-top">SHIFT</span></button>
+      <button class="key-btn key-pink"><span class="key-top">ALPHA</span></button>
+      <button class="key-btn key-gray"><span class="key-top">MODE</span><span class="key-bot">SETUP</span></button>
+      <button class="key-btn key-gray"><span class="key-sym">⬅</span></button>
+      <button class="key-btn key-gray"><span class="key-sym">➡</span></button>
+      <button class="key-btn key-gray"><span class="key-sym">ON</span></button>
+      <!-- The rest of the keys should be filled as per your mapping, for demo just add some rows: -->
+      <button class="key-btn">7</button>
+      <button class="key-btn">8</button>
+      <button class="key-btn">9</button>
+      <button class="key-btn key-orange">DEL</button>
+      <button class="key-btn key-green">AC</button>
+      <button class="key-btn">÷</button>
+      <!-- ...complete mapping for all keys as per image... -->
+    </div>
+  </div>
+  <div id="calc">
+    <div class="display-wrap">
+      <button id="modeBtn" class="mode-btn" onclick="toggleMode()">DEG</button>
+      <div id="display-exp"></div>
+      <div id="display-res"></div>
+    </div>
+    <div class="history-wrap" id="history-wrap"></div>
+    <div class="button-row">
+      <button class="btn-arrow" onclick="arrow('up')">&#8593;</button>
+      <button class="btn-arrow" onclick="arrow('down')">&#8595;</button>
+      <button class="btn-arrow" onclick="arrow('left')">&#8592;</button>
+      <button class="btn-arrow" onclick="arrow('right')">&#8594;</button>
+      <button class="btn-ac btn-sm" onclick="clearDisplay()">AC</button>
+      <button class="btn-del btn-sm" onclick="deleteChar()">DEL</button>
+    </div>
+    <div class="button-row">
+      <button class="btn-func" onclick="insertText('sin(')">sin</button>
+      <button class="btn-func" onclick="insertText('cos(')">cos</button>
+      <button class="btn-func" onclick="insertText('tan(')">tan</button>
+      <button class="btn-func" onclick="insertText('log10(')">log</button>
+      <button class="btn-func" onclick="insertText('ln(')">ln</button>
+    </div>
+    <div class="button-row">
+      <button class="btn-num" onclick="insertText('7')">7</button>
+      <button class="btn-num" onclick="insertText('8')">8</button>
+      <button class="btn-num" onclick="insertText('9')">9</button>
+      <button class="btn-op" onclick="insertOperator('*')">×</button>
+      <button class="btn-func" onclick="insertText('sqrt(')">√</button>
+    </div>
+    <div class="button-row">
+      <button class="btn-num" onclick="insertText('4')">4</button>
+      <button class="btn-num" onclick="insertText('5')">5</button>
+      <button class="btn-num" onclick="insertText('6')">6</button>
+      <button class="btn-op" onclick="insertOperator('-')">−</button>
+      <button class="btn-func" onclick="insertExponent()">xʸ</button>
+    </div>
+    <div class="button-row">
+      <button class="btn-num" onclick="insertText('1')">1</button>
+      <button class="btn-num" onclick="insertText('2')">2</button>
+      <button class="btn-num" onclick="insertText('3')">3</button>
+      <button class="btn-op" onclick="insertOperator('+')">+</button>
+      <button class="btn-func" onclick="insertText('pi')">π</button>
+    </div>
+    <div class="button-row">
+      <button class="btn-num" onclick="insertText('0')">0</button>
+      <button class="btn-num" onclick="insertText('.')">.</button>
+      <button class="btn-func btn-sm" onclick="insertText('e')">e</button>
+      <button class="btn-func btn-sm" onclick="insertText('!')">n!</button>
+      <button class="btn-ans btn-sm" onclick="insertText('Ans')">Ans</button>
+      <button class="btn-eq btn-wide" onclick="calculate()">=</button>
+    </div>
+  </div>
+  <script>
+    // --- State
+    let exp = '';
+    let cursor = 0;
+    let ans = '';
+    let history = [];
+    let historyPos = -1;
+    let mode = 'DEG'; // DEG or RAD
+
+    // --- Render
+    function renderDisplay() {
+      let html = '';
+      let left = exp.slice(0, cursor);
+      let right = exp.slice(cursor);
+
+      // Superscript handling (display only)
+      let leftDisp = left.replace(/(\^)([0-9]+)/g, function(_, __, p1) {
+        return `<sup>${p1}</sup>`;
+      });
+      let rightDisp = right.replace(/(\^)([0-9]+)/g, function(_, __, p1) {
+        return `<sup>${p1}</sup>`;
+      });
+
+      document.getElementById('display-exp').innerHTML =
+        escapeHtml(leftDisp) + '<span id="display-cur"></span>' + escapeHtml(rightDisp);
+
+      // Live preview
+      let preview = '';
+      if (exp.trim()) {
+        try {
+          let expEval = exp.replace(/÷/g, '/')
+                           .replace(/×/g, '*')
+                           .replace(/−/g, '-')
+                           .replace(/π/g, 'pi')
+                           .replace(/n!/g, '!')
+                           .replace(/Ans/g, ans === '' ? '0' : '(' + ans + ')');
+          // Trigonometri degree/radian
+          if (mode === 'DEG') {
+            expEval = expEval.replace(/(sin|cos|tan)\(([^()]*)\)/g, function(_, func, arg) {
+              return func + '(((' + arg + ')*pi/180))';
+            });
+          }
+          if (openParens(expEval) === 0) {
+            preview = math.evaluate(expEval);
+          }
+        } catch { preview = ''; }
+      }
+      document.getElementById('display-res').textContent = preview !== '' ? preview : '';
+      document.getElementById('modeBtn').textContent = mode;
+      document.getElementById('modeBtn').className = 'mode-btn' + (mode === 'RAD' ? ' active' : '');
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, function(m) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+      });
+    }
+
+    // --- Input
+    function insertText(txt) {
+      // Untuk pi, e, Ans, jika sebelum angka/kurung tutup, tambahkan *
+      if (["pi", "e", "Ans"].includes(txt) && /[0-9)!]$/.test(exp.slice(0, cursor))) {
+        txt = '*' + txt;
+      }
+      exp = exp.slice(0, cursor) + txt + exp.slice(cursor);
+      cursor += txt.length;
+      renderDisplay();
+    }
+
+    // Operator: replace if previous is op
+    function insertOperator(op) {
+      if (cursor === 0) return;
+      if (/[+\-*/^]$/.test(exp.slice(0, cursor))) {
+        exp = exp.slice(0, cursor-1) + op + exp.slice(cursor);
+      } else {
+        exp = exp.slice(0, cursor) + op + exp.slice(cursor);
+        cursor++;
+      }
+      renderDisplay();
+    }
+
+    // Eksponen dengan tampilan natural
+    function insertExponent() {
+      // Jangan dobel ^, dan hanya jika sebelum cursor adalah angka/kurung tutup/konstanta
+      if (cursor > 0 && /[0-9)eπ]$/.test(exp.slice(0, cursor))) {
+        exp = exp.slice(0, cursor) + '^' + exp.slice(cursor);
+        cursor++;
+        renderDisplay();
+      }
+    }
+
+    function clearDisplay() {
+      exp = '';
+      cursor = 0;
+      historyPos = -1;
+      renderDisplay();
+      showHistory(false);
+    }
+
+    function deleteChar() {
+      if (cursor > 0) {
+        exp = exp.slice(0, cursor-1) + exp.slice(cursor);
+        cursor--;
+        renderDisplay();
+      }
+    }
+
+    // --- History
+    function showHistory(show) {
+      const wrap = document.getElementById('history-wrap');
+      if (show && history.length > 0) {
+        wrap.style.display = '';
+        wrap.innerHTML = history.map((item,i) =>
+          `<div class="history-item${historyPos===i?' history-current':''}">
+             <span class="history-exp">${escapeHtml(item[0])}</span>
+             <span> = </span>
+             <span class="history-res">${escapeHtml(String(item[1]))}</span>
+           </div>`
+        ).reverse().join('');
+      } else {
+        wrap.style.display = 'none';
+      }
+    }
+
+    function calculate() {
+      try {
+        let expEval = exp.replace(/÷/g, '/')
+                         .replace(/×/g, '*')
+                         .replace(/−/g, '-')
+                         .replace(/π/g, 'pi')
+                         .replace(/n!/g, '!')
+                         .replace(/Ans/g, ans === '' ? '0' : '(' + ans + ')');
+        // Trigonometri degree/radian
+        if (mode === 'DEG') {
+          expEval = expEval.replace(/(sin|cos|tan)\(([^()]*)\)/g, function(_, func, arg) {
+            return func + '(((' + arg + ')*pi/180))';
+          });
+        }
+        let res = math.evaluate(expEval);
+        ans = res;
+        history.push([exp, String(res)]);
+        if (history.length > 100) history.shift();
+        exp = '';
+        cursor = 0;
+        historyPos = -1;
+        renderDisplay();
+        document.getElementById('display-res').textContent = res;
+        showHistory(true);
+      } catch {
+        document.getElementById('display-res').textContent = 'Error';
+      }
+    }
+
+    // --- Arrow key and button navigation
+    function arrow(dir) {
+      if (dir === 'left') {
+        if (cursor > 0) cursor--;
+        renderDisplay();
+      } else if (dir === 'right') {
+        if (cursor < exp.length) cursor++;
+        renderDisplay();
+      } else if (dir === 'up') {
+        if (history.length === 0) return;
+        if (historyPos < history.length-1) historyPos++;
+        else return;
+        const idx = history.length-1-historyPos;
+        exp = history[idx][0];
+        cursor = exp.length;
+        renderDisplay();
+        showHistory(true);
+      } else if (dir === 'down') {
+        if (historyPos <= 0) {
+          historyPos = -1;
+          exp = '';
+          cursor = 0;
+          renderDisplay();
+          showHistory(false);
+        } else {
+          historyPos--;
+          const idx = history.length-1-historyPos;
+          exp = history[idx][0];
+          cursor = exp.length;
+          renderDisplay();
+          showHistory(true);
+        }
+      }
+    }
+
+    function openParens(str) {
+      let open = 0;
+      for (let c of str) {
+        if (c === '(') open++;
+        else if (c === ')') open--;
+      }
+      return open;
+    }
+
+    // --- Mode
+    function toggleMode() {
+      mode = (mode === 'DEG' ? 'RAD' : 'DEG');
+      renderDisplay();
+    }
+
+    // --- Keyboard support
+    document.addEventListener('keydown', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'Enter') calculate();
+      else if (e.key === 'Backspace') deleteChar();
+      else if (e.key === 'Delete') clearDisplay();
+      else if (e.key === 'ArrowLeft') arrow('left');
+      else if (e.key === 'ArrowRight') arrow('right');
+      else if (e.key === 'ArrowUp') arrow('up');
+      else if (e.key === 'ArrowDown') arrow('down');
+      else if (e.key === '^') insertExponent();
+      else if (e.key.length === 1) {
+        // Allow 0-9, +, -, *, /, ., (, )
+        if (/[0-9]/.test(e.key)) insertText(e.key);
+        else if (e.key === '.') insertText('.');
+        else if (e.key === '+') insertOperator('+');
+        else if (e.key === '-') insertOperator('-');
+        else if (e.key === '*') insertOperator('*');
+        else if (e.key === '/') insertOperator('/');
+        else if (e.key === '(') insertText('(');
+        else if (e.key === ')') insertText(')');
+      }
+    });
+
+    // --- Initial
+    renderDisplay();
+ // MathJax rendering for LCD screen example
+    window.onload = function() {
+      MathJax.typesetPromise(["#lcdMath"]);
+    };
+    function dpad(where) {
+      // Placeholder for navigation logic
+      alert("Arrow: "+where);
+    }
+    // TODO: Implement full key mapping, interactivity, LCD update, MathJax input/output, shift/alpha/mode, etc.
+    // This structure is ready for you to expand in JS or even React/Three.js for even more realism!
+  </script>
+</body>
+</html>
