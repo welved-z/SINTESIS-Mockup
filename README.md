@@ -1,1 +1,1 @@
-# prototypecalculator
+# MOCKUP Platform SINTESIS
