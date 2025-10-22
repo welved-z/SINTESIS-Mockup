@@ -1,570 +1,233 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Realistic Casio fx-991D Plus Web Calculator</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <style>
-    body {
-      background: linear-gradient(135deg, #222 0%, #333 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .calc-casio-991d {
-      position: relative;
-      width: 370px;
-      height: 770px;
-      background: radial-gradient(ellipse at 55% 12%, #444 70%, #191919 100%);
-      border-radius: 36px 36px 50px 50px/42px 42px 65px 65px;
-      box-shadow:
-        0 7px 40px 10px #000b,
-        inset 0 2px 10px #fff2,
-        0 1.5px 4px #0009;
-      border: 1.8px solid #2c2c2c;
-      overflow: hidden;
-      user-select: none;
-      font-family: 'Share Tech Mono', monospace;
-      background-blend-mode: multiply;
-    }
-    /* Solar panel */
-    .calc-solar {
-      position: absolute;
-      top: 30px; left: 38px;
-      width: 105px; height: 20px;
-      background: linear-gradient(90deg,#2d141c 10%,#423942 90%);
-      border-radius: 6px;
-      box-shadow: inset 0 1.8px 5px #fff3, 0 1.5px 2px #222d;
-      border: 1.5px solid #1b1520;
-    }
-    /* Casio branding */
-    .calc-brand {
-      position: absolute;
-      top: 12px; left: 32px;
-      font-size: 1.25em;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #eee;
-      text-shadow: 0 1.5px 2px #222b;
-    }
-    .calc-model {
-      position: absolute;
-      top: 17px; right: 28px;
-      font-size: 0.95em;
-      font-weight: 700;
-      color: #f5f7fa;
-      letter-spacing: 0.03em;
-      text-shadow: 0 1.5px 2px #222b;
-    }
-    .calc-natural {
-      position: absolute;
-      top: 36px; right: 38px;
-      font-size: 0.97em;
-      color: #e8e1c5;
-      font-weight: bold;
-      letter-spacing: 0.04em;
-      text-shadow: 0 1.5px 2px #222b;
-    }
-    /* LCD screen */
-    .calc-lcd {
-      position: absolute;
-      left: 25px; top: 65px;
-      width: 320px; height: 85px;
-      background: linear-gradient(180deg, #f7f8fa 95%, #aaa 100%);
-      border-radius: 8px;
-      box-shadow:
-        0 2px 14px #aaa7,
-        0 1.5px 5px #222b,
-        inset 0 1.2px 8px #fff8;
-      border: 2.5px solid #444;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: flex-end;
-      padding: 14px 14px 7px 14px;
-      z-index: 3;
-    }
-    .lcd-math {
-      width: 100%;
-      min-height: 36px;
-      font-size: 1.32em;
-      color: #161a1c;
-      text-align: right;
-      font-family: 'Share Tech Mono', monospace;
-      overflow-x: auto;
-      overflow-y: hidden;
-      white-space: pre;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-end;
-    }
-    .lcd-ans {
-      font-size: 1em;
-      color: #2e3f26;
-      text-align: right;
-      min-height: 20px;
-      padding-right: 1px;
-      font-family: 'Share Tech Mono', monospace;
-      opacity: .97;
-    }
-    /* D-pad */
-    .calc-dpad {
-      position: absolute;
-      left: 127px; top: 160px;
-      width: 60px; height: 60px;
-      z-index: 3;
-      display: flex; align-items: center; justify-content: center;
-      pointer-events: none;
-    }
-    .dpad-btn {
-      position: absolute;
-      width: 36px; height: 18px;
-      background: linear-gradient(180deg, #444 60%, #161616 100%);
-      border-radius: 8px 8px 14px 14px/8px 8px 14px 14px;
-      box-shadow: 0 1.2px 4px #111a, 0 1.5px 2px #fff2 inset;
-      border: 1.3px solid #2a2d2d;
-      pointer-events: auto;
-      cursor: pointer;
-      transition: background .15s;
-    }
-    .dpad-btn:active { background: #222; }
-    .dpad-up { top: 0; left: 12px; transform: rotate(0deg);}
-    .dpad-down { bottom: 0; left: 12px; transform: rotate(180deg);}
-    .dpad-left { top: 21px; left: -7px; width: 18px; height: 36px; border-radius: 8px 14px 14px 8px/8px 14px 14px 8px; transform: rotate(-90deg);}
-    .dpad-right { top: 21px; right: -7px; width: 18px; height: 36px; border-radius: 14px 8px 8px 14px/14px 8px 8px 14px; transform: rotate(90deg);}
-    .dpad-center {
-      position: absolute;
-      left: 16px; top: 21px;
-      width: 28px; height: 28px;
-      background: radial-gradient(circle at 65% 35%, #c8c7c7 65%, #888 90%, #222 100%);
-      border-radius: 50%;
-      box-shadow: 0 1.5px 4px #111a, 0 1.5px 2px #fff2 inset;
-      border: 1.3px solid #2a2d2d;
-      pointer-events: auto;
-      cursor: pointer;
-      z-index: 10;
-    }
-    .dpad-arrow { font-size: 1.07em; color: #e6e6e6; text-shadow: 0 1px 1px #222; pointer-events: none;}
-    .dpad-center-dot {
-      position: absolute;
-      left: 12px; top: 12px;
-      width: 4px; height: 4px;
-      background: #222;
-      border-radius: 50%;
-      z-index: 20;
-      opacity: .7;
-    }
-    /* Key grid */
-    .calc-keyboard {
-      position: absolute;
-      left: 26px; top: 245px;
-      width: 318px; height: 490px;
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(9, 1fr);
-      gap: 7px 5.6px;
-      z-index: 2;
-      padding-bottom: 10px;
-    }
-    .key-btn {
-      background: linear-gradient(180deg, #f8f7f7 20%, #bdbdbd 75%, #585858 100%);
-      border-radius: 7px;
-      border: 1.8px solid #bcbcbc;
-      box-shadow:
-        0 2.5px 7px #2224 inset,
-        0 1.5px 2px #fff2 inset,
-        0 2.5px 8px #0003;
-      font-size: 1.09em;
-      font-family: 'Share Tech Mono', monospace;
-      color: #252525;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.13s, box-shadow 0.13s;
-      outline: none;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-shadow: 0 1.5px 1.5px #fff6;
-    }
-    .key-btn:active {
-      background: linear-gradient(180deg, #e8e7e7 10%, #9d9d9d 70%, #383838 100%);
-      box-shadow: 0 1.5px 2px #fff2 inset, 0 1.5px 2px #0005;
-    }
-    /* Example for colored keys */
-    .key-orange { background: linear-gradient(180deg,#ffd16b 70%,#e2a321 100%); color: #6b3c00; border-color: #e4c07a; }
-    .key-green { background: linear-gradient(180deg,#bbec8e 70%,#53a100 100%); color: #265b00; border-color: #9fe448; }
-    .key-gray { background: linear-gradient(180deg,#c6c6c6 80%,#8b8b8b 100%); color: #222; border-color: #aaa; }
-    .key-yellow { background: linear-gradient(180deg,#fff8b3 70%,#ffe34e 100%); color: #aa9400; border-color: #f7e97a; }
-    .key-pink { background: linear-gradient(180deg,#f7c8e0 70%,#e26ba1 100%); color: #ae006d; border-color: #e9b0d1; }
-    .key-red { background: linear-gradient(180deg,#ffb3b3 70%,#e24e4e 100%); color: #a60000; border-color: #e97a7a; }
-    .key-blue { background: linear-gradient(180deg,#b3d8ff 70%,#4e8be2 100%); color: #0033a6; border-color: #7aaee9; }
-
-    .key-btn .key-bot { font-size: 0.87em; color: #444; margin-top: 1px; }
-    .key-btn .key-top { font-size: 0.7em; color: #b95e5e; position: absolute; left: 5px; top: 2px;}
-    .key-btn .key-lft { font-size: 0.7em; color: #3c8e8e; position: absolute; left: 5px; bottom: 2px;}
-    .key-btn .key-sym { font-size: 0.84em; color: #222; }
-    /* Key sizes */
-    .key-wide { grid-column: span 2; }
-    /* Bevel shadow for realism */
-    .calc-casio-991d:after {
-      content: '';
-      position: absolute;
-      pointer-events:none;
-      inset: 0;
-      border-radius: 36px 36px 50px 50px/42px 42px 65px 65px;
-      box-shadow:
-        0 10px 40px 10px #0009 inset,
-        0 0 2px #fff4 inset,
-        0 -6px 20px 10px #fff1 inset;
-      z-index: 4;
-      opacity: 0.8;
-      mix-blend-mode: lighten;
-    }
-    /* Responsive */
-    @media (max-width: 500px) {
-      .calc-casio-991d { transform: scale(0.8);}
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock-up Dashboard SINTESIS</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Memuat Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Memuat ikon (Heroicons via CDN) -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.3/24/outline/index.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Menggunakan font Inter */
+        }
+        /* Style tambahan jika diperlukan */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.6rem; /* Padding lebih kecil */
+            border-radius: 9999px; /* Bulat penuh */
+            font-size: 0.75rem; /* Font lebih kecil */
+            font-weight: 500;
+            margin-right: 0.3rem; /* Jarak antar badge */
+            margin-bottom: 0.3rem; /* Jarak ke bawah */
+        }
+        .badge-blue {
+            background-color: #DBEAFE; /* light blue */
+            color: #1E40AF; /* dark blue */
+        }
+         .badge-green {
+            background-color: #D1FAE5; /* light green */
+            color: #065F46; /* dark green */
+        }
+         .badge-yellow {
+             background-color: #FEF9C3; /* light yellow */
+             color: #854D0E; /* dark yellow */
+         }
+    </style>
 </head>
-<body>
-   <div class="calc-casio-991d" id="casio-calc">
-    <div class="calc-solar"></div>
-    <div class="calc-brand">CASIO</div>
-    <div class="calc-model">fx-991D PLUS</div>
-    <div class="calc-natural">NATURAL-V.P.A.M.</div>
-    <div class="calc-lcd">
-      <div class="lcd-math" id="lcdMath">sin(75)=\\frac{\\sqrt{6}+\\sqrt{2}}{4}</div>
-      <div class="lcd-ans" id="lcdAns">BENAR</div>
+<body class="bg-gray-100 p-8">
+
+    <!-- Kontainer Utama Dashboard -->
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <!-- Header Dashboard (Opsional) -->
+        <div class="flex justify-between items-center mb-6 pb-4 border-b">
+            <h1 class="text-2xl font-bold text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 inline-block mr-2 text-blue-600">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+                </svg>
+                Dashboard JEMBATAN DIGITAL (SINTESIS)
+            </h1>
+            <input type="text" placeholder="Cari..." class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Grid untuk Widget/Kolom -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Kolom 1: Dynamic Skill Dashboard -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow">
+                <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-blue-500">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                    </svg>
+                    Tren Keterampilan Terkini
+                </h2>
+                <p class="text-sm text-gray-500 mb-4">Jawa Barat - 30 Hari Terakhir</p>
+                <!-- Placeholder Grafik Batang -->
+                <div class="bg-white p-3 rounded shadow-inner">
+                    <p class="text-sm font-medium text-gray-600 mb-2">Top 5 Skills:</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-700">Python</span>
+                            <div class="w-3/5 bg-blue-100 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                            <span class="text-xs font-semibold text-blue-600">90%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-700">Mesin CNC</span>
+                            <div class="w-3/5 bg-blue-100 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                             <span class="text-xs font-semibold text-blue-600">75%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-700">Analisis Data</span>
+                            <div class="w-3/5 bg-blue-100 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
+                            </div>
+                             <span class="text-xs font-semibold text-blue-600">70%</span>
+                        </div>
+                         <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-700">Cloud Computing</span>
+                            <div class="w-3/5 bg-blue-100 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 65%"></div>
+                            </div>
+                             <span class="text-xs font-semibold text-blue-600">65%</span>
+                        </div>
+                         <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-700">Komunikasi</span>
+                            <div class="w-3/5 bg-blue-100 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
+                            </div>
+                             <span class="text-xs font-semibold text-blue-600">60%</span>
+                        </div>
+                    </div>
+                </div>
+                 <p class="mt-4 text-xs text-gray-500 italic">*Sumber: Analisis Data Lowongan Kerja Real-Time (Contoh)</p>
+                 <!-- Callout -->
+                 <div class="mt-3 text-center text-xs text-blue-700 font-medium">
+                     <span class="font-bold">↑</span> Tren Skill Real-Time (Untuk Pemerintah & Sekolah)
+                 </div>
+            </div>
+
+            <!-- Kolom 2: Kurikulum Adaptif -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow">
+                <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-green-500">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                    </svg>
+                    Review Modul Pelatihan (Feedback Industri)
+                </h2>
+                <div class="space-y-4">
+                    <!-- Modul 1 -->
+                    <div class="bg-white p-3 rounded shadow-inner">
+                        <p class="text-sm font-medium text-gray-800">Modul Dasar Jaringan A</p>
+                        <p class="text-xs text-gray-500 mb-2">SMK 1 Bandung</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span class="text-yellow-500 flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-gray-300"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                </span>
+                                <span class="text-xs ml-1 text-gray-600">(4.0)</span>
+                            </div>
+                            <button class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full hover:bg-green-200">Review</button>
+                        </div>
+                    </div>
+                     <!-- Modul 2 -->
+                    <div class="bg-white p-3 rounded shadow-inner">
+                        <p class="text-sm font-medium text-gray-800">Modul CNC 5-Axis</p>
+                        <p class="text-xs text-gray-500 mb-2">Poltek Manufaktur Astra</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                               <span class="text-yellow-500 flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                </span>
+                                <span class="text-xs ml-1 text-gray-600">(4.8)</span>
+                            </div>
+                            <button class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full hover:bg-green-200">Review</button>
+                        </div>
+                         <!-- Contoh Komentar -->
+                         <div class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                            <p class="text-xs font-semibold text-yellow-800">Industri Otomotif X:</p>
+                            <p class="text-xs text-gray-700">"Modul sangat relevan! Perlu ditambah materi troubleshooting."</p>
+                         </div>
+                    </div>
+                </div>
+                 <!-- Callout -->
+                 <div class="mt-3 text-center text-xs text-green-700 font-medium">
+                     <span class="font-bold">↑</span> Feedback Langsung Industri ke Kurikulum
+                 </div>
+            </div>
+
+            <!-- Kolom 3: Talent Pool -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow">
+                 <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-purple-500">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 15.088 15.088 0 0 0-3.741-13.566c-.842-.842-1.782-1.527-2.766-2.075M15.751 15.75c.414-.414.774-.848 1.097-1.311A15.01 15.01 0 0 1 18 10.5c.398-1.362-.114-2.843-1.145-3.874l-1.428-1.428c-1.03-1.03-2.512-1.545-3.874-1.145A15.01 15.01 0 0 1 10.5 18c-1.362.398-2.843-.114-3.874-1.145l-1.428-1.428c-1.03-1.03-1.545-2.512-1.145-3.874A15.01 15.01 0 0 1 6 10.5c.398 1.362-.114 2.843-1.145 3.874l-1.428 1.428c-1.03 1.03-2.512 1.545-3.874 1.145A15.088 15.088 0 0 1 1.28 5.279 9.094 9.094 0 0 1 5.021 1.5M10.5 18.25a2.25 2.25 0 1 0 3.182-3.182 2.25 2.25 0 0 0-3.182 3.182Zm5.25-5.656a2.25 2.25 0 1 0-3.182-3.182 2.25 2.25 0 0 0 3.182 3.182Z" />
+                    </svg>
+                    Talent Pool & Bursa Proyek
+                </h2>
+                <div class="space-y-4">
+                    <!-- Kartu Profil 1 -->
+                    <div class="bg-white p-3 rounded shadow-inner flex items-start space-x-3">
+                        <img src="https://placehold.co/40x40/E0E7FF/3730A3?text=BS" alt="Foto Profil" class="w-10 h-10 rounded-full">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">Taufik Wijaya Indrayadi</p>
+                            <p class="text-xs text-gray-500 mb-2">OXFORD High School</p>
+                            <div class="flex flex-wrap">
+                                <span class="badge badge-blue">
+                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path d="M5.25 3A2.25 2.25 0 0 0 3 5.25v1.51a.75.75 0 0 0 1.085.669l2.83-1.132A2.25 2.25 0 0 1 9.75 8.25v.06a.75.75 0 0 0 .669 1.085l1.132 2.83a2.25 2.25 0 0 1-1.961 2.815V13a2.25 2.25 0 0 0-2.25-2.25h-1.51a.75.75 0 0 0-.669 1.085l1.132 2.83a2.25 2.25 0 0 1-2.815 1.961H3A2.25 2.25 0 0 1 .75 13v-1.51a.75.75 0 0 1 1.085-.669l2.83 1.132A2.25 2.25 0 0 0 7.5 10.75v-.06a.75.75 0 0 1 .669-1.085l1.132-2.83A2.25 2.25 0 0 0 7.339 4.96v-.71A2.25 2.25 0 0 1 5.25 3Z M11.21 8.04a.75.75 0 0 0-1.06 1.06l2.122 2.121a.75.75 0 1 0 1.06-1.06L11.21 8.04Z" /></svg>
+                                    Dasar Jaringan A
+                                </span>
+                                 <span class="badge badge-green">
+                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path fill-rule="evenodd" d="M11.972 2.05a.75.75 0 0 1 .15.823l-3.25 6.5a.75.75 0 0 1-1.344 0l-1.75-3.5a.75.75 0 0 1 0-.646l1.75-3.5a.75.75 0 0 1 1.344 0l.378.756A5.25 5.25 0 0 0 13 4.25a.75.75 0 0 1 0 1.5 3.75 3.75 0 0 1-3.378 3.652L7.972 12.95a.75.75 0 0 1-1.444 0L4.05 7.773A.75.75 0 0 1 5.227 7h1.011a3.75 3.75 0 0 1 3.11-4.704l.115-.029a.75.75 0 0 1 .823.15l1.686 1.633ZM4.5 5.75a.75.75 0 0 0 0-1.5h-.75a.75.75 0 0 0 0 1.5h.75Z" clip-rule="evenodd" /></svg>
+                                     Mikrotik Basic
+                                 </span>
+                            </div>
+                        </div>
+                         <button class="mt-2 text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-200">Lihat Profil</button>
+                    </div>
+                     <!-- Kartu Profil 2 -->
+                     <div class="bg-white p-3 rounded shadow-inner flex items-start space-x-3">
+                        <img src="https://placehold.co/40x40/FEF9C3/854D0E?text=AS" alt="Foto Profil" class="w-10 h-10 rounded-full">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">Ana Setiyana</p>
+                            <p class="text-xs text-gray-500 mb-2">Poltek Manufaktur Solo</p>
+                            <div class="flex flex-wrap">
+                                 <span class="badge badge-yellow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path d="M10.5 4.75a.75.75 0 0 0 0-1.5H5.5a.75.75 0 0 0 0 1.5h5ZM11.75 6.5a.75.75 0 0 1-.75.75H5a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75ZM11 9.75a.75.75 0 0 0 0-1.5H5a.75.75 0 0 0 0 1.5h6ZM11.75 11.5a.75.75 0 0 1-.75.75h-6a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75Z" /></svg>
+                                    CNC Operator
+                                 </span>
+                                 <span class="badge badge-blue">
+                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path fill-rule="evenodd" d="M8.75 1.75a.75.75 0 0 0-1.5 0v3.94L3.89 3.027a.75.75 0 0 0-1.034 1.09l3.39 3.197L2.857 7.31a.75.75 0 0 0 .14 1.053l3.39 3.197-3.39 3.197a.75.75 0 0 0 1.033 1.09l3.357-2.662v3.94a.75.75 0 0 0 1.5 0v-3.94l3.357 2.662a.75.75 0 1 0 1.033-1.09l-3.39-3.197 3.39-3.197a.75.75 0 0 0-.14-1.053L12.11 7.31l3.39-3.197a.75.75 0 1 0-1.034-1.09L10.75 5.69V1.75Z" clip-rule="evenodd" /></svg>
+                                     AutoCAD Dasar
+                                 </span>
+                            </div>
+                        </div>
+                         <button class="mt-2 text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-200">Tawarkan Proyek</button>
+                    </div>
+                </div>
+                 <!-- Callout -->
+                 <div class="mt-3 text-center text-xs text-purple-700 font-medium">
+                     <span class="font-bold">↑</span> Profil Skill Terverifikasi (Untuk Industri & Siswa)
+                 </div>
+            </div>
+        </div>
     </div>
-    <!-- D-pad -->
-    <div class="calc-dpad">
-      <button class="dpad-btn dpad-up"   onclick="dpad('up')"><span class="dpad-arrow">&#9650;</span></button>
-      <button class="dpad-btn dpad-down" onclick="dpad('down')"><span class="dpad-arrow">&#9660;</span></button>
-      <button class="dpad-btn dpad-left" onclick="dpad('left')"><span class="dpad-arrow">&#9664;</span></button>
-      <button class="dpad-btn dpad-right"onclick="dpad('right')"><span class="dpad-arrow">&#9654;</span></button>
-      <button class="dpad-center" onclick="dpad('center')"></button>
-      <div class="dpad-center-dot"></div>
-    </div>
-    <!-- Keyboard -->
-    <div class="calc-keyboard" id="calc-keys">
-      <!-- Example: top row -->
-      <button class="key-btn key-yellow"><span class="key-top">SHIFT</span></button>
-      <button class="key-btn key-pink"><span class="key-top">ALPHA</span></button>
-      <button class="key-btn key-gray"><span class="key-top">MODE</span><span class="key-bot">SETUP</span></button>
-      <button class="key-btn key-gray"><span class="key-sym">⬅</span></button>
-      <button class="key-btn key-gray"><span class="key-sym">➡</span></button>
-      <button class="key-btn key-gray"><span class="key-sym">ON</span></button>
-      <!-- The rest of the keys should be filled as per your mapping, for demo just add some rows: -->
-      <button class="key-btn">7</button>
-      <button class="key-btn">8</button>
-      <button class="key-btn">9</button>
-      <button class="key-btn key-orange">DEL</button>
-      <button class="key-btn key-green">AC</button>
-      <button class="key-btn">÷</button>
-      <!-- ...complete mapping for all keys as per image... -->
-    </div>
-  </div>
-  <div id="calc">
-    <div class="display-wrap">
-      <button id="modeBtn" class="mode-btn" onclick="toggleMode()">DEG</button>
-      <div id="display-exp"></div>
-      <div id="display-res"></div>
-    </div>
-    <div class="history-wrap" id="history-wrap"></div>
-    <div class="button-row">
-      <button class="btn-arrow" onclick="arrow('up')">&#8593;</button>
-      <button class="btn-arrow" onclick="arrow('down')">&#8595;</button>
-      <button class="btn-arrow" onclick="arrow('left')">&#8592;</button>
-      <button class="btn-arrow" onclick="arrow('right')">&#8594;</button>
-      <button class="btn-ac btn-sm" onclick="clearDisplay()">AC</button>
-      <button class="btn-del btn-sm" onclick="deleteChar()">DEL</button>
-    </div>
-    <div class="button-row">
-      <button class="btn-func" onclick="insertText('sin(')">sin</button>
-      <button class="btn-func" onclick="insertText('cos(')">cos</button>
-      <button class="btn-func" onclick="insertText('tan(')">tan</button>
-      <button class="btn-func" onclick="insertText('log10(')">log</button>
-      <button class="btn-func" onclick="insertText('ln(')">ln</button>
-    </div>
-    <div class="button-row">
-      <button class="btn-num" onclick="insertText('7')">7</button>
-      <button class="btn-num" onclick="insertText('8')">8</button>
-      <button class="btn-num" onclick="insertText('9')">9</button>
-      <button class="btn-op" onclick="insertOperator('*')">×</button>
-      <button class="btn-func" onclick="insertText('sqrt(')">√</button>
-    </div>
-    <div class="button-row">
-      <button class="btn-num" onclick="insertText('4')">4</button>
-      <button class="btn-num" onclick="insertText('5')">5</button>
-      <button class="btn-num" onclick="insertText('6')">6</button>
-      <button class="btn-op" onclick="insertOperator('-')">−</button>
-      <button class="btn-func" onclick="insertExponent()">xʸ</button>
-    </div>
-    <div class="button-row">
-      <button class="btn-num" onclick="insertText('1')">1</button>
-      <button class="btn-num" onclick="insertText('2')">2</button>
-      <button class="btn-num" onclick="insertText('3')">3</button>
-      <button class="btn-op" onclick="insertOperator('+')">+</button>
-      <button class="btn-func" onclick="insertText('pi')">π</button>
-    </div>
-    <div class="button-row">
-      <button class="btn-num" onclick="insertText('0')">0</button>
-      <button class="btn-num" onclick="insertText('.')">.</button>
-      <button class="btn-func btn-sm" onclick="insertText('e')">e</button>
-      <button class="btn-func btn-sm" onclick="insertText('!')">n!</button>
-      <button class="btn-ans btn-sm" onclick="insertText('Ans')">Ans</button>
-      <button class="btn-eq btn-wide" onclick="calculate()">=</button>
-    </div>
-  </div>
-  <script>
-    // --- State
-    let exp = '';
-    let cursor = 0;
-    let ans = '';
-    let history = [];
-    let historyPos = -1;
-    let mode = 'DEG'; // DEG or RAD
 
-    // --- Render
-    function renderDisplay() {
-      let html = '';
-      let left = exp.slice(0, cursor);
-      let right = exp.slice(cursor);
-
-      // Superscript handling (display only)
-      let leftDisp = left.replace(/(\^)([0-9]+)/g, function(_, __, p1) {
-        return `<sup>${p1}</sup>`;
-      });
-      let rightDisp = right.replace(/(\^)([0-9]+)/g, function(_, __, p1) {
-        return `<sup>${p1}</sup>`;
-      });
-
-      document.getElementById('display-exp').innerHTML =
-        escapeHtml(leftDisp) + '<span id="display-cur"></span>' + escapeHtml(rightDisp);
-
-      // Live preview
-      let preview = '';
-      if (exp.trim()) {
-        try {
-          let expEval = exp.replace(/÷/g, '/')
-                           .replace(/×/g, '*')
-                           .replace(/−/g, '-')
-                           .replace(/π/g, 'pi')
-                           .replace(/n!/g, '!')
-                           .replace(/Ans/g, ans === '' ? '0' : '(' + ans + ')');
-          // Trigonometri degree/radian
-          if (mode === 'DEG') {
-            expEval = expEval.replace(/(sin|cos|tan)\(([^()]*)\)/g, function(_, func, arg) {
-              return func + '(((' + arg + ')*pi/180))';
-            });
-          }
-          if (openParens(expEval) === 0) {
-            preview = math.evaluate(expEval);
-          }
-        } catch { preview = ''; }
-      }
-      document.getElementById('display-res').textContent = preview !== '' ? preview : '';
-      document.getElementById('modeBtn').textContent = mode;
-      document.getElementById('modeBtn').className = 'mode-btn' + (mode === 'RAD' ? ' active' : '');
-    }
-
-    function escapeHtml(s) {
-      return s.replace(/[&<>"']/g, function(m) {
-        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
-      });
-    }
-
-    // --- Input
-    function insertText(txt) {
-      // Untuk pi, e, Ans, jika sebelum angka/kurung tutup, tambahkan *
-      if (["pi", "e", "Ans"].includes(txt) && /[0-9)!]$/.test(exp.slice(0, cursor))) {
-        txt = '*' + txt;
-      }
-      exp = exp.slice(0, cursor) + txt + exp.slice(cursor);
-      cursor += txt.length;
-      renderDisplay();
-    }
-
-    // Operator: replace if previous is op
-    function insertOperator(op) {
-      if (cursor === 0) return;
-      if (/[+\-*/^]$/.test(exp.slice(0, cursor))) {
-        exp = exp.slice(0, cursor-1) + op + exp.slice(cursor);
-      } else {
-        exp = exp.slice(0, cursor) + op + exp.slice(cursor);
-        cursor++;
-      }
-      renderDisplay();
-    }
-
-    // Eksponen dengan tampilan natural
-    function insertExponent() {
-      // Jangan dobel ^, dan hanya jika sebelum cursor adalah angka/kurung tutup/konstanta
-      if (cursor > 0 && /[0-9)eπ]$/.test(exp.slice(0, cursor))) {
-        exp = exp.slice(0, cursor) + '^' + exp.slice(cursor);
-        cursor++;
-        renderDisplay();
-      }
-    }
-
-    function clearDisplay() {
-      exp = '';
-      cursor = 0;
-      historyPos = -1;
-      renderDisplay();
-      showHistory(false);
-    }
-
-    function deleteChar() {
-      if (cursor > 0) {
-        exp = exp.slice(0, cursor-1) + exp.slice(cursor);
-        cursor--;
-        renderDisplay();
-      }
-    }
-
-    // --- History
-    function showHistory(show) {
-      const wrap = document.getElementById('history-wrap');
-      if (show && history.length > 0) {
-        wrap.style.display = '';
-        wrap.innerHTML = history.map((item,i) =>
-          `<div class="history-item${historyPos===i?' history-current':''}">
-             <span class="history-exp">${escapeHtml(item[0])}</span>
-             <span> = </span>
-             <span class="history-res">${escapeHtml(String(item[1]))}</span>
-           </div>`
-        ).reverse().join('');
-      } else {
-        wrap.style.display = 'none';
-      }
-    }
-
-    function calculate() {
-      try {
-        let expEval = exp.replace(/÷/g, '/')
-                         .replace(/×/g, '*')
-                         .replace(/−/g, '-')
-                         .replace(/π/g, 'pi')
-                         .replace(/n!/g, '!')
-                         .replace(/Ans/g, ans === '' ? '0' : '(' + ans + ')');
-        // Trigonometri degree/radian
-        if (mode === 'DEG') {
-          expEval = expEval.replace(/(sin|cos|tan)\(([^()]*)\)/g, function(_, func, arg) {
-            return func + '(((' + arg + ')*pi/180))';
-          });
-        }
-        let res = math.evaluate(expEval);
-        ans = res;
-        history.push([exp, String(res)]);
-        if (history.length > 100) history.shift();
-        exp = '';
-        cursor = 0;
-        historyPos = -1;
-        renderDisplay();
-        document.getElementById('display-res').textContent = res;
-        showHistory(true);
-      } catch {
-        document.getElementById('display-res').textContent = 'Error';
-      }
-    }
-
-    // --- Arrow key and button navigation
-    function arrow(dir) {
-      if (dir === 'left') {
-        if (cursor > 0) cursor--;
-        renderDisplay();
-      } else if (dir === 'right') {
-        if (cursor < exp.length) cursor++;
-        renderDisplay();
-      } else if (dir === 'up') {
-        if (history.length === 0) return;
-        if (historyPos < history.length-1) historyPos++;
-        else return;
-        const idx = history.length-1-historyPos;
-        exp = history[idx][0];
-        cursor = exp.length;
-        renderDisplay();
-        showHistory(true);
-      } else if (dir === 'down') {
-        if (historyPos <= 0) {
-          historyPos = -1;
-          exp = '';
-          cursor = 0;
-          renderDisplay();
-          showHistory(false);
-        } else {
-          historyPos--;
-          const idx = history.length-1-historyPos;
-          exp = history[idx][0];
-          cursor = exp.length;
-          renderDisplay();
-          showHistory(true);
-        }
-      }
-    }
-
-    function openParens(str) {
-      let open = 0;
-      for (let c of str) {
-        if (c === '(') open++;
-        else if (c === ')') open--;
-      }
-      return open;
-    }
-
-    // --- Mode
-    function toggleMode() {
-      mode = (mode === 'DEG' ? 'RAD' : 'DEG');
-      renderDisplay();
-    }
-
-    // --- Keyboard support
-    document.addEventListener('keydown', function(e) {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      if (e.key === 'Enter') calculate();
-      else if (e.key === 'Backspace') deleteChar();
-      else if (e.key === 'Delete') clearDisplay();
-      else if (e.key === 'ArrowLeft') arrow('left');
-      else if (e.key === 'ArrowRight') arrow('right');
-      else if (e.key === 'ArrowUp') arrow('up');
-      else if (e.key === 'ArrowDown') arrow('down');
-      else if (e.key === '^') insertExponent();
-      else if (e.key.length === 1) {
-        // Allow 0-9, +, -, *, /, ., (, )
-        if (/[0-9]/.test(e.key)) insertText(e.key);
-        else if (e.key === '.') insertText('.');
-        else if (e.key === '+') insertOperator('+');
-        else if (e.key === '-') insertOperator('-');
-        else if (e.key === '*') insertOperator('*');
-        else if (e.key === '/') insertOperator('/');
-        else if (e.key === '(') insertText('(');
-        else if (e.key === ')') insertText(')');
-      }
-    });
-
-    // --- Initial
-    renderDisplay();
- // MathJax rendering for LCD screen example
-    window.onload = function() {
-      MathJax.typesetPromise(["#lcdMath"]);
-    };
-    function dpad(where) {
-      // Placeholder for navigation logic
-      alert("Arrow: "+where);
-    }
-    // TODO: Implement full key mapping, interactivity, LCD update, MathJax input/output, shift/alpha/mode, etc.
-    // This structure is ready for you to expand in JS or even React/Three.js for even more realism!
-  </script>
 </body>
 </html>
