@@ -1,285 +1,298 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mock-up Dashboard SINTESIS</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script type="module" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.3/24/outline/index.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock-up Dashboard SINTESIS</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Memuat Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Memuat ikon (Heroicons via CDN) -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/heroicons@2.1.3/24/outline/index.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Menggunakan font Inter */
+        }
+        /* Style tambahan jika diperlukan */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.6rem; /* Padding lebih kecil */
+            border-radius: 9999px; /* Bulat penuh */
+            font-size: 0.75rem; /* Font lebih kecil */
+            font-weight: 500;
+            margin-right: 0.3rem; /* Jarak antar badge */
+            margin-bottom: 0.3rem; /* Jarak ke bawah */
+        }
+        .badge-blue {
+            background-color: #DBEAFE; /* light blue */
+            color: #1E40AF; /* dark blue */
+        }
+         .badge-green {
+            background-color: #D1FAE5; /* light green */
+            color: #065F46; /* dark green */
+        }
+         .badge-yellow {
+             background-color: #FEF9C3; /* light yellow */
+             color: #854D0E; /* dark yellow */
+         }
 
-  <style>
-    body { font-family: 'Inter', sans-serif; }
+        /* ===== skill rows alignment ===== */
+        .skills-card {
+            background: #fff;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
 
-    /* Badge styles (sama seperti file aslinya) */
-    .badge { display:inline-flex; align-items:center; padding:0.25rem 0.6rem; border-radius:9999px; font-size:0.75rem; font-weight:500; margin-right:0.3rem; margin-bottom:0.3rem; }
-    .badge-blue { background-color:#DBEAFE; color:#1E40AF; }
-    .badge-green { background-color:#D1FAE5; color:#065F46; }
-    .badge-yellow { background-color:#FEF9C3; color:#854D0E; }
+        .skill-row {
+            display: grid;
+            grid-template-columns: 140px 1fr 56px; /* label | bar | percent */
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+        }
 
-    /* ===== skill rows alignment & animation ===== */
-    .skills-card { background:#fff; padding:0.75rem; border-radius:0.5rem; }
-    .skill-row {
-      display: grid;
-      grid-template-columns: 140px 1fr 56px; /* label | bar | percent */
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.25rem 0;
-    }
-    .skill-label { font-size:0.75rem; color:#374151; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .bar {
-      height:0.5rem;
-      background:#DBEAFE;
-      border-radius:9999px;
-      overflow:hidden;
-      position:relative;
-    }
-    /* bar-fill uses CSS var --w (animated) */
-    .bar-fill {
-      height:100%;
-      background: linear-gradient(90deg,#2563eb,#60a5fa);
-      width: var(--w, 0%);
-      border-radius:9999px;
-      transition: width 700ms cubic-bezier(.2,.9,.2,1);
-    }
-    .percent {
-      text-align:right;
-      font-weight:600;
-      color:#2563eb;
-      font-variant-numeric: tabular-nums;
-      font-size:0.75rem;
-      min-width:44px;
-    }
+        .skill-label {
+            font-size: 0.75rem;
+            color: #374151; /* gray-700 */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    /* reduced motion: prefer immediate result */
-    @media (prefers-reduced-motion: reduce) {
-      .bar-fill { transition: none !important; }
-    }
+        .bar {
+            height: 0.5rem; /* 8px */
+            background: #DBEAFE; /* blue-100 */
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+        }
 
-    /* responsive: stack label on small screens */
-    @media (max-width:420px) {
-      .skill-row { grid-template-columns: 1fr 56px; }
-      .skill-label { grid-column: 1 / -1; margin-bottom:0.35rem; }
-      .bar { grid-column: 1 / 2; }
-      .percent { grid-column: 2 / 3; }
-    }
-  </style>
+        /* .bar-fill uses CSS variable --w to control width (e.g. style="--w:90%") */
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg,#2563eb,#60a5fa); /* blue gradient */
+            width: var(--w, 0%);
+            border-radius: 9999px;
+            transition: width 0.6s ease;
+        }
+
+        .percent {
+            text-align: right;
+            font-weight: 600;
+            color: #2563eb; /* blue-600 */
+            font-variant-numeric: tabular-nums; /* keeps digits monospaced */
+            font-size: 0.75rem;
+        }
+
+        /* Responsive: pada layar kecil, tumpuk label di atas bar */
+        @media (max-width: 420px) {
+            .skill-row {
+                grid-template-columns: 1fr 56px;
+            }
+            .skill-label {
+                grid-column: 1 / -1;
+                margin-bottom: 0.35rem;
+            }
+            .bar { grid-column: 1 / 2; }
+            .percent { grid-column: 2 / 3; }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 p-8">
 
-  <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-    <div class="flex justify-between items-center mb-6 pb-4 border-b">
-      <h1 class="text-2xl font-bold text-gray-800">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 inline-block mr-2 text-blue-600">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
-        </svg>
-        SINTESIS - Penghubung Tenaga Kerja dan Industri.
-      </h1>
-      <input type="text" placeholder="Cari..." class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <!-- Kontainer Utama Dashboard -->
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <!-- Header Dashboard (Opsional) -->
+        <div class="flex justify-between items-center mb-6 pb-4 border-b">
+            <h1 class="text-2xl font-bold text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 inline-block mr-2 text-blue-600">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+                </svg>
+                SINTESIS - Penghubung Tenaga Kerja dan Industri.
+            </h1>
+            <input type="text" placeholder="Cari..." class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Grid untuk Widget/Kolom -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Kolom 1: Dynamic Skill Dashboard -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow">
+                <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-blue-500">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                    </svg>
+                    Tren Keterampilan Terkini
+                </h2>
+                <p class="text-sm text-gray-500 mb-4">D.I. Yogyakarta - 30 Hari Terakhir</p>
+                <!-- Placeholder Grafik Batang (Diperbarui agar rapi) -->
+                <div class="skills-card">
+                    <p class="text-sm font-medium text-gray-600 mb-2">Top 5 Skills:</p>
+
+                    <div class="space-y-1">
+                        <div class="skill-row" role="listitem" aria-label="Python 90 persen">
+                            <div class="skill-label">Python</div>
+                            <div class="bar" aria-hidden="true">
+                                <div class="bar-fill" style="--w:90%"></div>
+                            </div>
+                            <div class="percent">90%</div>
+                        </div>
+
+                        <div class="skill-row" role="listitem" aria-label="Mesin CNC 75 persen">
+                            <div class="skill-label">Mesin CNC</div>
+                            <div class="bar" aria-hidden="true">
+                                <div class="bar-fill" style="--w:75%"></div>
+                            </div>
+                            <div class="percent">75%</div>
+                        </div>
+
+                        <div class="skill-row" role="listitem" aria-label="Analisis Data 70 persen">
+                            <div class="skill-label">Analisis Data</div>
+                            <div class="bar" aria-hidden="true">
+                                <div class="bar-fill" style="--w:70%"></div>
+                            </div>
+                            <div class="percent">70%</div>
+                        </div>
+
+                        <div class="skill-row" role="listitem" aria-label="Cloud Computing 65 persen">
+                            <div class="skill-label">Cloud Computing</div>
+                            <div class="bar" aria-hidden="true">
+                                <div class="bar-fill" style="--w:65%"></div>
+                            </div>
+                            <div class="percent">65%</div>
+                        </div>
+
+                        <div class="skill-row" role="listitem" aria-label="Komunikasi 60 persen">
+                            <div class="skill-label">Komunikasi</div>
+                            <div class="bar" aria-hidden="true">
+                                <div class="bar-fill" style="--w:60%"></div>
+                            </div>
+                            <div class="percent">60%</div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="mt-4 text-xs text-gray-500 italic">*Sumber: Analisis Data Lowongan Kerja Real-Time Kemnaker</p>
+                 <!-- Callout -->
+                 <div class="mt-3 text-center text-xs text-blue-700 font-medium">
+                     <span class="font-bold">↑</span> Tren Skill Real-Time (Untuk Pemerintah & Sekolah)
+                 </div>
+            </div>
+
+            <!-- Kolom 2: Kurikulum Adaptif -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow">
+                <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-green-500">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                    </svg>
+                    Review Modul Pelatihan (Feedback Industri)
+                </h2>
+                <div class="space-y-4">
+                    <!-- Modul 1 -->
+                    <div class="bg-white p-3 rounded shadow-inner">
+                        <p class="text-sm font-medium text-gray-800">Modul Dasar Jaringan A</p>
+                        <p class="text-xs text-gray-500 mb-2">SMA Harvard 1</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span class="text-yellow-500 flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-gray-300"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                </span>
+                                <span class="text-xs ml-1 text-gray-600">(4.0)</span>
+                            </div>
+                            <button class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full hover:bg-green-200">Review</button>
+                        </div>
+                    </div>
+                     <!-- Modul 2 -->
+                    <div class="bg-white p-3 rounded shadow-inner">
+                        <p class="text-sm font-medium text-gray-800">Modul CNC 5-Axis</p>
+                        <p class="text-xs text-gray-500 mb-2">Poltek Manufaktur JULIO</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                               <span class="text-yellow-500 flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
+                                </span>
+                                <span class="text-xs ml-1 text-gray-600">(4.8)</span>
+                            </div>
+                            <button class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full hover:bg-green-200">Review</button>
+                        </div>
+                         <!-- Contoh Komentar -->
+                         <div class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                            <p class="text-xs font-semibold text-yellow-800">Industri Otomotif MRA Group:</p>
+                            <p class="text-xs text-gray-700">"Modul sangat relevan! Perlu ditambah materi troubleshooting."</p>
+                         </div>
+                    </div>
+                </div>
+                 <!-- Callout -->
+                 <div class="mt-3 text-center text-xs text-green-700 font-medium">
+                     <span class="font-bold">↑</span> Feedback Langsung Industri ke Kurikulum
+                 </div>
+            </div>
+
+            <!-- Kolom 3: Talent Pool -->
+            <div class="bg-gray-50 p-4 rounded-lg shadow">
+                 <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-purple-500">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 15.088 15.088 0 0 0-3.741-13.566c-.842-.842-1.782-1.527-2.766-2.075M15.751 15.75c.414-.414.774-.848 1.097-1.311A15.01 15.01 0 0 1 18 10.5c.398-1.362-.114-2.843-1.145-3.874l-1.428-1.428c-1.03-1.03-2.512-1.545-3.874-1.145A15.01 15.01 0 0 1 10.5 18c-1.362.398-2.843-.114-3.874-1.145l-1.428-1.428c-1.03-1.03-1.545-2.512-1.145-3.874A15.01 15.01 0 0 1 6 10.5c.398 1.362-.114 2.843-1.145 3.874l-1.428 1.428c-1.03 1.03-2.512 1.545-3.874 1.145A15.088 15.088 0 0 1 1.28 5.279 9.094 9.094 0 0 1 5.021 1.5M10.5 18.25a2.25 2.25 0 1 0 3.182-3.182 2.25 2.25 0 0 0-3.182 3.182Zm5.25-5.656a2.25 2.25 0 1 0-3.182-3.182 2.25 2.25 0 0 0 3.182 3.182Z" />
+                    </svg>
+                    Talent Pool & Bursa Proyek
+                </h2>
+                <div class="space-y-4">
+                    <!-- Kartu Profil 1 -->
+                    <div class="bg-white p-3 rounded shadow-inner flex items-start space-x-3">
+                        <img src="https://placehold.co/40x40/E0E7FF/3730A3?text=AS" alt="Foto Profil" class="w-10 h-10 rounded-full">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">Azkia Sanchianisa</p>
+                            <p class="text-xs text-gray-500 mb-2">National University of Singapore</p>
+                            <div class="flex flex-wrap">
+                                <span class="badge badge-blue">
+                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path d="M5.25 3A2.25 2.25 0 0 0 3 5.25v1.51a.75.75 0 0 0 1.085.669l2.83-1.132A2.25 2.25 0 0 1 9.75 8.25v.06a.75.75 0 0 0 .669 1.085l1.132 2.83a2.25 2.25 0 0 1-1.961 2.815V13a2.25 2.25 0 0 0-2.25-2.25h-1.51a.75.75 0 0 0-.669 1.085l1.132 2.83a2.25 2.25 0 0 1-2.815 1.961H3A2.25 2.25 0 0 1 .75 13v-1.51a.75.75 0 0 1 1.085-.669l2.83 1.132A2.25 2.25 0 0 0 7.5 10.75v-.06a.75.75 0 0 1 .669-1.085l1.132-2.83A2.25 2.25 0 0 0 7.339 4.96v-.71A2.25 2.25 0 0 1 5.25 3Z M11.21 8.04a.75.75 0 0 0-1.06 1.06l2.122 2.121a.75.75 0 1 0 1.06-1.06L11.21 8.04Z" /></svg>
+                                    Dasar Jaringan A
+                                </span>
+                                 <span class="badge badge-green">
+                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path fill-rule="evenodd" d="M11.972 2.05a.75.75 0 0 1 .15.823l-3.25 6.5a.75.75 0 0 1-1.344 0l-1.75-3.5a.75.75 0 0 1 0-.646l1.75-3.5a.75.75 0 0 1 1.344 0l.378.756A5.25 5.25 0 0 0 13 4.25a.75.75 0 0 1 0 1.5 3.75 3.75 0 0 1-3.378 3.652L7.972 12.95a.75.75 0 0 1-1.444 0L4.05 7.773A.75.75 0 0 1 5.227 7h1.011a3.75 3.75 0 0 1 3.11-4.704l.115-.029a.75.75 0 0 1 .823.15l1.686 1.633ZM4.5 5.75a.75.75 0 0 0 0-1.5h-.75a.75.75 0 0 0 0 1.5h.75Z" clip-rule="evenodd" /></svg>
+                                     Mikrotik Spesifik
+                                 </span>
+                            </div>
+                        </div>
+                         <button class="mt-2 text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-200">Lihat Profil</button>
+                    </div>
+                     <!-- Kartu Profil 2 -->
+                     <div class="bg-white p-3 rounded shadow-inner flex items-start space-x-3">
+                        <img src="https://placehold.co/40x40/FEF9C3/854D0E?text=TWI" alt="Foto Profil" class="w-10 h-10 rounded-full">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">Taufik Wijaya Indrayadi</p>
+                            <p class="text-xs text-gray-500 mb-2">Piet Academy</p>
+                            <div class="flex flex-wrap">
+                                 <span class="badge badge-yellow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path d="M10.5 4.75a.75.75 0 0 0 0-1.5H5.5a.75.75 0 0 0 0 1.5h5ZM11.75 6.5a.75.75 0 0 1-.75.75H5a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75ZM11 9.75a.75.75 0 0 0 0-1.5H5a.75.75 0 0 0 0 1.5h6ZM11.75 11.5a.75.75 0 0 1-.75.75h-6a.75.75 0 0 1 0-1.5h6a.75.75 0 0 1 .75.75Z" /></svg>
+                                    CNC Operator
+                                 </span>
+                                 <span class="badge badge-blue">
+                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 mr-1"><path fill-rule="evenodd" d="M8.75 1.75a.75.75 0 0 0-1.5 0v3.94L3.89 3.027a.75.75 0 0 0-1.034 1.09l3.39 3.197L2.857 7.31a.75.75 0 0 0 .14 1.053l3.39 3.197-3.39 3.197a.75.75 0 0 0 1.033 1.09l3.357-2.662v3.94a.75.75 0 0 0 1.5 0v-3.94l3.357 2.662a.75.75 0 1 0 1.033-1.09l-3.39-3.197 3.39-3.197a.75.75 0 0 0-.14-1.053L12.11 7.31l3.39-3.197a.75.75 0 1 0-1.034-1.09L10.75 5.69V1.75Z" clip-rule="evenodd" /></svg>
+                                     AutoCAD Dasar
+                                 </span>
+                            </div>
+                        </div>
+                         <button class="mt-2 text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-200">Tawarkan Proyek</button>
+                    </div>
+                </div>
+                 <!-- Callout -->
+                 <div class="mt-3 text-center text-xs text-purple-700 font-medium">
+                     <span class="font-bold">↑</span> Profil Skill Terverifikasi (Untuk Industri & Siswa)
+                 </div>
+            </div>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Kolom 1: Dynamic Skill Dashboard (DI SINI ada perubahan) -->
-      <div class="bg-gray-50 p-4 rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-blue-500">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
-          </svg>
-          Tren Keterampilan Terkini
-        </h2>
-        <p class="text-sm text-gray-500 mb-4">D.I. Yogyakarta - 30 Hari Terakhir</p>
-
-        <!-- skills-card: kontainer tempat JS akan render skill rows -->
-        <div class="skills-card" id="skills-card" aria-live="polite">
-          <p class="text-sm font-medium text-gray-600 mb-2">Top 5 Skills:</p>
-          <div id="skills-list" class="space-y-1" role="list"></div>
-        </div>
-
-        <p class="mt-4 text-xs text-gray-500 italic">*Sumber: Analisis Data Lowongan Kerja Real-Time Kemnaker</p>
-        <div class="mt-3 text-center text-xs text-blue-700 font-medium">
-          <span class="font-bold">↑</span> Tren Skill Real-Time (Untuk Pemerintah & Sekolah)
-        </div>
-      </div>
-
-      <!-- Kolom 2 dan 3 dibiarkan seperti file asli (cut untuk ringkas) -->
-      <div class="bg-gray-50 p-4 rounded-lg shadow">
-        <!-- isi kolom 2 (tetap seperti sebelumnya) -->
-        <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-green-500">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-          </svg>
-          Review Modul Pelatihan (Feedback Industri)
-        </h2>
-        <!-- (Isi modul tetap sama seperti file asli; dipersingkat di sini) -->
-        <div class="space-y-4">
-          <div class="bg-white p-3 rounded shadow-inner">
-            <p class="text-sm font-medium text-gray-800">Modul Dasar Jaringan A</p>
-            <p class="text-xs text-gray-500 mb-2">SMA Harvard 1</p>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <span class="text-yellow-500 flex">
-                  <!-- bintang -->
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c.321-.772 1.415-.772 1.736 0l1.83 4.401 4.753.393c.842.07 1.168 1.056.55 1.609l-3.518 3.07 1.054 4.896c.176.818-.676 1.478-1.391 1.047L10 16.121l-4.13 2.273c-.715.431-1.567-.23-1.391-1.047l1.054-4.896L1.57 9.287c-.618-.553-.292-1.539.55-1.609l4.753-.393 1.83-4.401Z" clip-rule="evenodd" /></svg>
-                </span>
-                <span class="text-xs ml-1 text-gray-600">(4.0)</span>
-              </div>
-              <button class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full hover:bg-green-200">Review</button>
-            </div>
-          </div>
-        </div>
-        <div class="mt-3 text-center text-xs text-green-700 font-medium">
-          <span class="font-bold">↑</span> Feedback Langsung Industri ke Kurikulum
-        </div>
-      </div>
-
-      <div class="bg-gray-50 p-4 rounded-lg shadow">
-        <h2 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2 text-purple-500">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 15.088 15.088 0 0 0-3.741-13.566c-.842-.842-1.782-1.527-2.766-2.075M15.751 15.75c.414-.414.774-.848 1.097-1.311A15.01 15.01 0 0 1 18 10.5c.398-1.362-.114-2.843-1.145-3.874l-1.428-1.428c-1.03-1.03-2.512-1.545-3.874-1.145A15.01 15.01 0 0 1 10.5 18c-1.362.398-2.843-.114-3.874-1.145l-1.428-1.428c-1.03 1.03-2.512 1.545-3.874 1.145A15.088 15.088 0 0 1 1.28 5.279 9.094 9.094 0 0 1 5.021 1.5M10.5 18.25a2.25 2.25 0 1 0 3.182-3.182 2.25 2.25 0 0 0-3.182 3.182Zm5.25-5.656a2.25 2.25 0 1 0-3.182-3.182 2.25 2.25 0 0 0 3.182 3.182Z" />
-          </svg>
-          Talent Pool & Bursa Proyek
-        </h2>
-        <!-- ringkasan konten -->
-        <div class="space-y-4">
-          <div class="bg-white p-3 rounded shadow-inner flex items-start space-x-3">
-            <img src="https://placehold.co/40x40/E0E7FF/3730A3?text=AS" alt="Foto Profil" class="w-10 h-10 rounded-full">
-            <div>
-              <p class="text-sm font-semibold text-gray-800">Azkia Sanchianisa</p>
-              <p class="text-xs text-gray-500 mb-2">National University of Singapore</p>
-              <div class="flex flex-wrap">
-                <span class="badge badge-blue">Dasar Jaringan A</span>
-              </div>
-            </div>
-            <button class="mt-2 text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-200">Lihat Profil</button>
-          </div>
-        </div>
-        <div class="mt-3 text-center text-xs text-purple-700 font-medium">
-          <span class="font-bold">↑</span> Profil Skill Terverifikasi (Untuk Industri & Siswa)
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== JS: render dynamic skill list + animasi saat load ===== -->
-  <script>
-    (function () {
-      // Data skill: bisa diganti atau diambil dari API
-      const skills = [
-        { name: 'Python', pct: 90 },
-        { name: 'Mesin CNC', pct: 75 },
-        { name: 'Analisis Data', pct: 70 },
-        { name: 'Cloud Computing', pct: 65 },
-        { name: 'Komunikasi', pct: 60 }
-      ];
-
-      const listEl = document.getElementById('skills-list');
-      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      // helper: animate number (count-up)
-      function animateNumber(el, to, duration = 700) {
-        if (prefersReducedMotion) {
-          el.textContent = to + '%';
-          return;
-        }
-        const start = performance.now();
-        const from = 0;
-        function tick(now) {
-          const t = Math.min(1, (now - start) / duration);
-          const eased = t; // linear or use easing if wanted
-          const current = Math.round(from + (to - from) * eased);
-          el.textContent = current + '%';
-          if (t < 1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      }
-
-      // render rows
-      skills.forEach((s, idx) => {
-        const row = document.createElement('div');
-        row.className = 'skill-row';
-        row.setAttribute('role', 'listitem');
-        row.setAttribute('aria-label', `${s.name} ${s.pct} persen`);
-
-        const label = document.createElement('div');
-        label.className = 'skill-label';
-        label.textContent = s.name;
-
-        const barWrap = document.createElement('div');
-        barWrap.className = 'bar';
-        barWrap.setAttribute('aria-hidden', 'true');
-
-        const barFill = document.createElement('div');
-        barFill.className = 'bar-fill';
-        // start at 0 width to allow transition
-        barFill.style.setProperty('--w', '0%');
-        barWrap.appendChild(barFill);
-
-        const percent = document.createElement('div');
-        percent.className = 'percent';
-        percent.textContent = '0%';
-
-        row.appendChild(label);
-        row.appendChild(barWrap);
-        row.appendChild(percent);
-
-        listEl.appendChild(row);
-
-        // Delay per-bar untuk staggered effect
-        const delay = prefersReducedMotion ? 0 : idx * 120;
-
-        // trigger animation after small timeout so transition runs
-        setTimeout(() => {
-          // set width (this triggers CSS transition)
-          barFill.style.setProperty('--w', s.pct + '%');
-
-          // animate number
-          animateNumber(percent, s.pct, 700);
-        }, 100 + delay);
-      });
-
-      // OPTIONAL: expose function untuk update data dari API
-      window.updateSkillData = function (newSkills) {
-        // replace contents and re-render; simple implementation
-        listEl.innerHTML = '';
-        newSkills.forEach((s) => {
-          // reuse above logic (could be refactored)
-          const row = document.createElement('div');
-          row.className = 'skill-row';
-          row.setAttribute('role', 'listitem');
-          row.setAttribute('aria-label', `${s.name} ${s.pct} persen`);
-
-          const label = document.createElement('div');
-          label.className = 'skill-label';
-          label.textContent = s.name;
-
-          const barWrap = document.createElement('div');
-          barWrap.className = 'bar';
-          barWrap.setAttribute('aria-hidden', 'true');
-
-          const barFill = document.createElement('div');
-          barFill.className = 'bar-fill';
-          barFill.style.setProperty('--w', '0%');
-          barWrap.appendChild(barFill);
-
-          const percent = document.createElement('div');
-          percent.className = 'percent';
-          percent.textContent = '0%';
-
-          row.appendChild(label);
-          row.appendChild(barWrap);
-          row.appendChild(percent);
-
-          listEl.appendChild(row);
-
-          setTimeout(() => {
-            barFill.style.setProperty('--w', s.pct + '%');
-            animateNumber(percent, s.pct, 700);
-          }, 80);
-        });
-      };
-    })();
-  </script>
 </body>
 </html>
